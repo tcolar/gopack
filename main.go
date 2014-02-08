@@ -24,8 +24,9 @@ const (
 )
 
 var (
-	pwd        string
-	showColors = true
+	pwd            string
+	showColors     = true
+	originalGoPath string
 )
 
 func main() {
@@ -35,6 +36,12 @@ func main() {
 
 	// localize GOPATH
 	setupEnv()
+
+	switch os.Args[1] {
+	case "fixdeps":
+		fixDeps(".")
+		return
+	}
 
 	p, err := AnalyzeSourceTree(".")
 	if err != nil {
@@ -148,6 +155,7 @@ func setPwd() {
 func setupEnv() {
 	setPwd()
 	vendor := fmt.Sprintf("%s/%s", pwd, VendorDir)
+	originalGoPath = os.Getenv("GOPATH")
 	err := os.Setenv("GOPATH", vendor)
 	if err != nil {
 		fail(err)

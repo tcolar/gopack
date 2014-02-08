@@ -12,12 +12,14 @@ const (
 type ProjectError struct {
 	Kind    string
 	Message string
+	Path    string
 }
 
 func UnusedDependencyError(importPath string) *ProjectError {
 	return &ProjectError{
 		UnusedDep,
 		fmt.Sprintf("%s in gopack.config is unused\n", importPath),
+		importPath,
 	}
 }
 
@@ -26,6 +28,7 @@ func UnmanagedImportError(s *ImportStats) *ProjectError {
 	return &ProjectError{
 		UnmanagedImport,
 		msg,
+		s.Path,
 	}
 }
 
