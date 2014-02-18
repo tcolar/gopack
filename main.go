@@ -38,6 +38,9 @@ func main() {
 	setupEnv()
 
 	switch os.Args[1] {
+	case "path":
+		fmt.Print(os.Getenv("GOPATH"))
+		return
 	case "fixdeps":
 		fixDeps(".")
 		return
