@@ -22,6 +22,7 @@ func fixDeps(root string) {
 	announceGopack()
 
 	checkConfig(root)
+
 	// Analyze deps
 	p, err := AnalyzeSourceTree(root)
 	if err != nil {
@@ -29,6 +30,7 @@ func fixDeps(root string) {
 	}
 
 	_, dependencies := loadConfiguration(root)
+	log.Printf("deps: %s", dependencies)
 	if dependencies != nil {
 		errors := dependencies.Validate(p)
 		for _, e := range errors {
@@ -194,8 +196,17 @@ func checkConfig(root string) {
 				'N': "No",
 			})
 		if strings.ToUpper(answer) == "Y" {
+			log.Print(originalGoPath)
+			curPath, _ := filepath.Abs(root)
+			log.Print(curPath)
+			rel, _ := filepath.Rel(path.Join(originalGoPath, "src"), curPath)
+			repo := ask(fmt.Sprintf("Repo? : [%s]", rel), map[int]string{})
+			if len(repo) == 0 {
+				repo = rel
+			}
+			repoStr := fmt.Sprintf("repo = %s", repo)
 			printLine("Creating the gopack.config file.", Green)
-			ioutil.WriteFile(configPath, []byte{}, 0644)
+			ioutil.WriteFile(configPath, []byte(repoStr), 0644)
 		} else {
 			fail("No gopack.config file, can't contnue.", Red)
 		}

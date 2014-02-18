@@ -31,6 +31,8 @@ func NewConfig(dir string) *Config {
 
 	if deps := t.Get("deps"); deps != nil {
 		config.DepsTree = deps.(*toml.TomlTree)
+	} else {
+		config.DepsTree = &toml.TomlTree{}
 	}
 
 	if repo := t.Get("repo"); repo != nil {
